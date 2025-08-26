@@ -1,0 +1,89 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>Admin</h1>
+
+
+<h2>Steps</h2>
+<form method="post" action="{{ url_for('main.admin_steps') }}" class="row">
+  <input type="hidden" name="action" value="add"/>
+  <input type="text" name="name" placeholder="New step name"/>
+  <button type="submit">Add Step</button>
+</form>
+
+<p>Current order (drag to reorder, then Save Order):</p>
+<ol id="step-list">
+  {% for s in steps %}
+    <li data-id="{{ s.id }}">
+      <strong>{{ s.name }}</strong>
+      <form method="post" action="{{ url_for('main.admin_rename_step') }}" class="row" style="display:inline-block; margin-left:10px">
+        <input type="hidden" name="step_id" value="{{ s.id }}"/>
+        <input type="text" name="name" placeholder="Rename to..."/>
+        <button type="submit">Rename</button>
+      </form>
+      <form method="post" action="{{ url_for('main.admin_delete_step') }}" style="display:inline-block; margin-left:6px">
+        <input type="hidden" name="step_id" value="{{ s.id }}"/>
+        <button type="submit" onclick="return confirm('Archive this step? Data is retained.');">Archive</button>
+      </form>
+    </li>
+  {% endfor %}
+</ol>
+
+<form method="post" action="{{ url_for('main.admin_steps') }}" id="reseq-form">
+  <input type="hidden" name="action" value="reseq"/>
+  {% for s in steps %}
+    <input type="hidden" name="step_id[]" value="{{ s.id }}"/>
+  {% endfor %}
+  <button type="submit">Save Order</button>
+</form>
+
+{% if archived %}
+<h3>Archived steps (kept in DB, hidden from UI)</h3>
+<ul>
+  {% for s in archived %}
+    <li>{{ s.name }} (id {{ s.id }})</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<h2>Units</h2>
+
+<form method="post" action="{{ url_for('main.admin_import') }}" enctype="multipart/form-data" class="row">
+  <label>Import Units (CSV with header "serial")</label>
+  <input type="file" name="csv" accept=".csv"/>
+  <button type="submit">Import</button>
+</form>
+
+<p><a class="button" href="{{ url_for('main.admin_export') }}">Export Status CSV</a></p>
+
+<script>
+  // Drag-and-drop reorder
+  const list = document.getElementById('step-list');
+  let dragEl;
+  list.querySelectorAll('li').forEach(li => {
+    li.draggable = true;
+    li.addEventListener('dragstart', e => dragEl = li);
+    li.addEventListener('dragover', e => e.preventDefault());
+    li.addEventListener('drop', e => {
+      e.preventDefault();
+      if (dragEl && dragEl !== li) {
+        if (dragEl.compareDocumentPosition(li) & Node.DOCUMENT_POSITION_FOLLOWING) {
+          li.after(dragEl);
+        } else {
+          li.before(dragEl);
+        }
+        // update hidden inputs
+        const form = document.getElementById('reseq-form');
+        form.querySelectorAll('input[name="step_id[]"]').forEach(i => i.remove());
+        Array.from(list.children).forEach(li2 => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'step_id[]';
+          input.value = li2.dataset.id;
+          form.appendChild(input);
+        });
+      }
+    });
+  });
+</script>
+{% endblock %}

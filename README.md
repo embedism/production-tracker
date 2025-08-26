@@ -15,7 +15,11 @@ Designed for **factory floors** and **small batch assembly lines** where each un
 
 ## Screenshots
 
-*(Add your own screenshots here: dashboard, scan page, unit detail page, admin page.)*
+![Dashboard](images/Dashboard.PNG?raw=true "Dashboard")
+
+![Admin](images/Admin.PNG?raw=true "Admin")
+
+![Tracker](images/Tracker.PNG?raw=true "Tracker")
 
 ---
 

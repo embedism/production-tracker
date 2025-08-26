@@ -1,0 +1,41 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Production Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <nav class="topbar">
+      <div class="left">
+        <a href="{{ url_for('main.index') }}" class="brand">Production Tracker</a>
+        <a href="{{ url_for('main.scan') }}" class="navlink">Scan</a>
+        <a href="{{ url_for('main.admin') }}" class="navlink">Admin</a>
+      </div>
+      <div class="right">
+        <form action="{{ url_for('main.set_station') }}" method="post" class="inline">
+          <input type="text" name="station" placeholder="Station name" value="{{ request.cookies.get('station','') }}" />
+          <button type="submit">Set Station</button>
+        </form>
+        <form action="{{ url_for('main.set_operator') }}" method="post" class="inline" style="margin-left:8px">
+          <input type="text" name="operator" placeholder="Operator initials" value="{{ request.cookies.get('operator', '') }}" />
+          <button type="submit">Set Operator</button>
+        </form>
+      </div>
+    </nav>
+    <main class="container">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <ul class="flashes">
+            {% for cat, msg in messages %}
+              <li class="{{ cat }}">{{ msg }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

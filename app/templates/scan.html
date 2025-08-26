@@ -1,0 +1,16 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>Scan</h1>
+<form method="post" action="{{ url_for('main.scan') }}">
+  <label for="code">Scan QR/Barcode:</label>
+  <input id="code" name="code" type="text" autocomplete="off" autofocus required />
+  <button type="submit">Lookup</button>
+</form>
+<script>
+  // Keep focus on the input
+  const code = document.getElementById('code');
+  window.addEventListener('load', () => code.focus());
+  window.addEventListener('click', () => code.focus());
+</script>
+{% endblock %}

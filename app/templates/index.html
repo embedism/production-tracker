@@ -1,0 +1,31 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<h1>Dashboard</h1>
+<p>Total units: <strong>{{ unit_count }}</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Step</th>
+      <th>Pending</th>
+      <th>Pass</th>
+      <th>Fail</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for s in steps %}
+    <tr>
+      <td>{{ s.name }}</td>
+      <td>{{ totals[s.name]['pending'] }}</td>
+      <td>{{ totals[s.name]['pass'] }}</td>
+      <td>{{ totals[s.name]['fail'] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="cta-row">
+  <a class="button" href="{{ url_for('main.scan') }}">Go to Scan</a>
+</div>
+{% endblock %}
